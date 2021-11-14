@@ -601,6 +601,11 @@ export class CodeCellModel extends CellModel implements ICodeCellModel {
    */
   constructor(options: CodeCellModel.IOptions) {
     super(options);
+    if (options.type === 'gui') {
+      this.metadata.set('type', 'gui');
+    } else {
+      this.metadata.delete('type');
+    }
     const factory =
       options.contentFactory || CodeCellModel.defaultContentFactory;
     const trusted = this.trusted;
@@ -893,6 +898,8 @@ export namespace CodeCellModel {
      * The factory for output area model creation.
      */
     contentFactory?: IContentFactory;
+
+    type?: string;
   }
 
   /**

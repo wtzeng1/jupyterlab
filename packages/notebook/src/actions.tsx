@@ -2182,13 +2182,23 @@ namespace Private {
       if (!notebook.isSelectedOrActive(child)) {
         return;
       }
-      if (child.model.type !== value) {
+      if (
+        child.model.type !== value ||
+        (child.model.metadata.get('type') === 'gui' &&
+          (value as string) !== 'gui')
+      ) {
         const cell = child.model.toJSON();
         let newCell: ICellModel;
 
-        switch (value) {
+        switch (value as nbformat.CellType | 'gui') {
           case 'code':
             newCell = model.contentFactory.createCodeCell({ cell });
+            break;
+          case 'gui':
+            newCell = model.contentFactory.createCodeCell({
+              cell,
+              type: 'gui'
+            });
             break;
           case 'markdown':
             newCell = model.contentFactory.createMarkdownCell({ cell });

@@ -274,7 +274,12 @@ function NotebookHeading(props: NotebookHeadingProps): JSX.Element {
   const itemRef = React.useRef<HTMLDivElement>(null);
   const isActive = props.isActive;
   React.useEffect(() => {
-    if (isActive && itemRef.current) {
+    if (
+      isActive &&
+      itemRef.current &&
+      props.area &&
+      itemRef.current.parentElement
+    ) {
       ElementExt.scrollIntoViewIfNeeded(
         props.area,
         itemRef.current.parentElement as Element

@@ -79,7 +79,8 @@ import { InputPlaceholder, OutputPlaceholder } from './placeholder';
 import { ResizeHandle } from './resizeHandle';
 
 import { Signal } from '@lumino/signaling';
-import { addIcon } from '@jupyterlab/ui-components';
+import { addIcon, ReactWidget } from '@jupyterlab/ui-components';
+import { GUICellInput } from './gui-widget';
 
 /**
  * The CSS class added to cell widgets.
@@ -225,6 +226,11 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
     input.addClass(CELL_INPUT_AREA_CLASS);
     inputWrapper.addWidget(inputCollapser);
     inputWrapper.addWidget(input);
+    if (model.metadata.get('type') === 'gui') {
+      this._input.node.style.display = 'none';
+      this._guiInput = new GUICellInput({ model });
+      inputWrapper.addWidget(this._guiInput);
+    }
     (this.layout as PanelLayout).addWidget(inputWrapper);
 
     this._inputPlaceholder = new InputPlaceholder(() => {
@@ -380,10 +386,16 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
     const layout = this._inputWrapper.layout as PanelLayout;
     if (value) {
       this._input.parent = null;
+      if (this._guiInput) {
+        this._guiInput.parent = null;
+      }
       layout.addWidget(this._inputPlaceholder);
     } else {
       this._inputPlaceholder.parent = null;
       layout.addWidget(this._input);
+      if (this._guiInput) {
+        layout.addWidget(this._guiInput);
+      }
     }
     this._inputHidden = value;
     if (this.syncCollapse) {
@@ -561,6 +573,7 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
   private _readOnly = false;
   private _model: T;
   private _inputHidden = false;
+  private _guiInput?: ReactWidget;
   private _input: InputArea;
   private _inputWrapper: Widget;
   private _inputPlaceholder: InputPlaceholder;

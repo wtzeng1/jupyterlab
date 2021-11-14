@@ -350,6 +350,10 @@ export class CellTypeSwitcher extends ReactWidget {
         }
       }
     }
+    const metadataType = this._notebook.activeCell?.model.metadata.get('type');
+    if (typeof metadataType === 'string') {
+      value = metadataType;
+    }
     return (
       <HTMLSelect
         className={TOOLBAR_CELLTYPE_DROPDOWN_CLASS}
@@ -363,6 +367,7 @@ export class CellTypeSwitcher extends ReactWidget {
         <option value="code">{this._trans.__('Code')}</option>
         <option value="markdown">{this._trans.__('Markdown')}</option>
         <option value="raw">{this._trans.__('Raw')}</option>
+        <option value="gui">{this._trans.__('GUI')}</option>
       </HTMLSelect>
     );
   }
